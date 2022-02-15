@@ -1,0 +1,29 @@
+contract BettingGame {
+    struct Wager {
+        address player1;
+        address player2:
+        uint amount;
+    }
+    Wager[] public wagers;
+
+    function createWager(uint _amount) public payable {
+        require(msg.value == _amount);
+        Wager memory w = Wager(msg.sender,0,_amount);
+        uint wagerId = wagers.push(w) - 1; // this can be published in an event.  You'll need a method that can lookup open wagers  (where player2 is 0 and return those ids).
+    }
+
+    function takeWager(uint _id) public payable {
+        Wager storage w = wagers[_id];
+        require(w.player2 == 0);
+        require(msg.value == w.amount);
+        w.player2 = msg.sender;
+    }
+    
+    function randgen() public returns (uint) {
+    uint randomNumber = ... // some way to generate a random number
+    return randomNumber;
+    }                //It is practically impossible to get 'true' randomness inside the blockchain (without special centralized outside help such as oracles).
+                        Usually it's not necessary to generate really good randomness but sort of half-randomness is good enough. But if the stakes are very high
+                        (a big amount of ether for anyone who beats the system, for example) then half-randomness might be abused by miners.
+}
+
